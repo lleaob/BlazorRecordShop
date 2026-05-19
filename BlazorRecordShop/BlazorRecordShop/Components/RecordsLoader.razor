@@ -1,0 +1,61 @@
+﻿@if (albums != null)
+{
+    <div>
+            @foreach (var album in albums)
+            {
+            <div class="card">
+                @* <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://bulma.io/assets/images/placeholders/1280x960.png"
+                             alt="Placeholder image" />
+                    </figure>
+                </div> *@
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left">
+                            <figure class="image is-48x48">
+                                <img src="https://bulma.io/assets/images/placeholders/96x96.png"
+                                     alt="Placeholder image" />
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">@album.Title</p>
+                            <p class="subtitle is-6">@album.Artist</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        @album.Genre
+                        @* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
+                        iaculis mauris. <a>@bulmaio</a>. <a href="#">#css</a> *@
+                        <br />
+                        <time datetime="2016">@album.ReleaseYear</time>
+                    </div>
+                </div>
+            </div>
+            
+            }
+        
+    </div>
+} else 
+{
+    <div><em>Loading records...</em></div>
+}
+@code {
+    private List<Album>? albums;
+    protected override async Task OnInitializedAsync()
+    {
+        using HttpClient client = new()
+            {
+                BaseAddress = new Uri("https://localhost:7007/api/")
+            };
+        try
+        {
+            albums = await client.GetFromJsonAsync<List<Album>>("Albums");
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Request error: {e.Message}");
+        }
+    }
+}
