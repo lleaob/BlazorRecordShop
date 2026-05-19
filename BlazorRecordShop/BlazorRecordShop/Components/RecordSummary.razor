@@ -1,0 +1,10 @@
+﻿<div class="record-info">
+    <h3 class="record-title">@Album.Title</h3>
+    <p class="record-artist">@Album.Artist</p>
+    <p class="record-release-year">@Album.ReleaseYear</p>
+</div>
+
+@code {
+    [Parameter]
+    public Album Album { get; set; } = default!;
+}

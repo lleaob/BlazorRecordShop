@@ -1,0 +1,12 @@
+﻿<div class ="is-size-1 mb-6">List</div>
+
+<div class="records-summary-list">
+    @foreach (var album in summaryList)
+    {
+        <RecordSummary Album="@album" />
+    }
+</div>
+
+@code {
+    public List<Album> summaryList = MockAlbumData.sampleAlbums;
+}
