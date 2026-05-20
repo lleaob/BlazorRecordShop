@@ -3,6 +3,7 @@
     <div>
             @foreach (var album in albums)
             {
+                <a href="/records/@album.Id">
                 <div class="card-content">
                     <div class="media">
                         <div class="media-left">
@@ -25,6 +26,8 @@
                         <time datetime="2016">@album.ReleaseYear</time>
                     </div>
                 </div>
+                </a>
+                
             }
         
     </div>
