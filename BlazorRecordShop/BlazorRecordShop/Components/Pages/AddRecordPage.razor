@@ -1,0 +1,80 @@
+﻿@page "/records/add"
+@rendermode InteractiveServer
+
+<EditForm Model="album" OnValidSubmit="SaveChanges" FormName="AlbumEditForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label>Title: </label>
+        <InputText @bind-Value="album.Title" />
+        <ValidationMessage For="@(() => album.Title)" />
+    </div>
+    <div>
+        <label>Artist: </label>
+        <InputText @bind-Value="album.Artist" />
+        <ValidationMessage For="@(() => album.Artist)" />
+
+    </div>
+    <div>
+        <label>Genre: </label>
+        <InputSelect @bind-Value="album.Genre">
+            @foreach (var genre in Enum.GetValues(typeof(MusicGenre)))
+            {
+                <option value="@genre">@genre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => album.Genre)" />
+    </div>
+    <div>
+        <label>Year: </label>
+        <InputNumber @bind-Value="album.ReleaseYear" />
+        <ValidationMessage For="@(() => album.ReleaseYear)" />
+
+    </div>
+    <button type="submit">Save Changes</button>
+</EditForm>
+
+@code {
+    public Album? album { get; set; }
+
+    public bool isSuccessful = false;
+    private string lastSavedAlbum = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        album = new Album(0, string.Empty, string.Empty, DateTime.Now.Year)
+        {
+            Genre = MusicGenre.Unkown
+        };
+    }
+    private async Task SaveChanges()
+    {
+        if (album == null) return;
+
+        using HttpClient client = new()
+        {
+            BaseAddress = new Uri("https://localhost:7007/api/")
+        };
+        try
+        {
+            var response = await client.PostAsJsonAsync($"Albums", album);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"{album.Title}");
+                Console.WriteLine("Album successfully updated in API!");
+            }
+            else
+            {
+                Console.WriteLine($"API error: {response.StatusCode}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error sending update: {e.Message}");
+        }
+
+
+    }
+
+
+}

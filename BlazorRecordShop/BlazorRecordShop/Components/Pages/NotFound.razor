@@ -1,0 +1,13 @@
+﻿@page "/{*route:nonfile}"
+@rendermode InteractiveServer
+
+<div style="text-align: center; padding: 50px;">
+    <h1>Not Found!!</h1>
+    <p>Sorry, we couldn't find the page or record you were looking for.</p>
+    <a href="/" style="color: #007bff; text-decoration: underline;">Return to Record Shop Home</a>
+</div>
+
+@code {
+    [Parameter]
+    public string? Route { get; set; }
+}
