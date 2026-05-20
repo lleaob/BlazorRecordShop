@@ -1,0 +1,103 @@
+﻿@rendermode InteractiveServer
+@if (album != null)
+{
+    <div class="AlbumDetails">
+        <figure class="image is-48x48">
+            <img alt="Blank album cover and record."
+                 src="https://media.istockphoto.com/id/1290277377/photo/realistic-3d-render-of-vinyl-record.jpg?s=1024x1024&w=is&k=20&c=T6CBSS3m_Iyhnf09raHFW_Rdxw5RcTg_dFlUnobGB2E=" />
+        </figure>
+        <p>@album?.Title</p>
+        <p>@album?.Artist</p>
+        @album?.Genre
+        @album?.ReleaseYear
+    </div>
+
+    <EditForm Model="album" OnValidSubmit="SaveChanges"> <!--FormName="AlbumEditForm"-->
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label>Title: </label>
+            <InputText @bind-Value="album.Title" />
+            <ValidationMessage For="@(()=>album.Title)" />
+        </div>
+        <div>
+            <label>Artist: </label>
+            <InputText @bind-Value="album.Artist" />
+            <ValidationMessage For="@(() => album.Artist)" />
+
+        </div>
+        <div>
+            <label>Genre: </label>
+            <InputSelect @bind-Value="album.Genre">
+                @foreach (var genre in Enum.GetValues(typeof(MusicGenre)))
+                {
+                    <option value="@genre">@genre</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => album.Genre)" />
+        </div>
+        <div>
+            <label>Year: </label>
+            <InputNumber @bind-Value="album.ReleaseYear" />
+            <ValidationMessage For="@(() => album.ReleaseYear)" />
+
+        </div>
+        <button type="submit">Save Changes</button>
+    </EditForm>
+} else
+{
+    <p><em>Loading album data...</em></p>
+}
+
+@code {
+    private Album? updatedAlbum;
+    private Album? album;
+    protected override async Task OnInitializedAsync()
+    {
+        using HttpClient client = new()
+        {
+            BaseAddress = new Uri("https://localhost:7007/api/")
+        };
+        try
+        {
+            album = await client.GetFromJsonAsync<Album>("Albums/1");
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Request error: {e.Message}");
+        }
+    }
+    private async Task SaveChanges()
+    {
+        if (album == null) return;
+        updatedAlbum = new Album(album.Id, album.Artist, album.Title, album.ReleaseYear)
+        {
+            Tracklist = album.Tracklist != null ? new List<string>(album.Tracklist) : new List<string>(),
+            Genre = album.Genre
+        };
+
+        using HttpClient client = new()
+        {
+            BaseAddress = new Uri("https://localhost:7007/api/")
+        };
+        try
+        {
+            var response = await client.PutAsJsonAsync($"Albums/{album.Id}", updatedAlbum);
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"{updatedAlbum.Title}");
+                Console.WriteLine("Album successfully updated in API!");
+            }
+            else
+            {
+                Console.WriteLine($"API error: {response.StatusCode}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error sending update: {e.Message}");
+        }
+
+
+    }
+}
