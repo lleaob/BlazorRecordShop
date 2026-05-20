@@ -1,0 +1,36 @@
+﻿@page "/records/{Id:int}"
+@rendermode InteractiveServer
+
+<div class="AlbumDetails">
+    <figure class="image is-48x48">
+        <img alt="Blank album cover and record."
+             src="https://media.istockphoto.com/id/1290277377/photo/realistic-3d-render-of-vinyl-record.jpg?s=1024x1024&w=is&k=20&c=T6CBSS3m_Iyhnf09raHFW_Rdxw5RcTg_dFlUnobGB2E=" />
+    </figure>
+    <p>@album?.Title</p>
+    <p>@album?.Artist</p>
+    @album?.Genre
+    @album?.ReleaseYear
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Album album;
+    protected override async Task OnInitializedAsync()
+    {
+        using HttpClient client = new()
+        {
+            BaseAddress = new Uri("https://localhost:7007/api/")
+        };
+        try
+        {
+            album = await client.GetFromJsonAsync<Album>($"Albums/{Id}");
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Request error: {e.Message}");
+        }
+    }
+
+
+}
