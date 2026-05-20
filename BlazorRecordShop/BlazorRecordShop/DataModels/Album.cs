@@ -9,7 +9,7 @@ namespace BlazorRecordShop.DataModels
         [Required]
         public string Title { get; set; } = title;
         [Required]
-        [Range(1948,2200)]
+        [Range(1930, 2222)]
         public int ReleaseYear { get; set; } = releaseYear;
         public List<string> Tracklist { get; set; } = new List<string>();
         public MusicGenre Genre { get; set; } = MusicGenre.Unkown;

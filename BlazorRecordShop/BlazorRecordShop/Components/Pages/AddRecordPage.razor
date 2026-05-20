@@ -1,9 +1,12 @@
 ﻿@page "/records/add"
 @rendermode InteractiveServer
 
+<PageTitle>Durval Discos: Add Record</PageTitle>
+
+
 <EditForm Model="album" OnValidSubmit="SaveChanges" FormName="AlbumEditForm">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    
     <div>
         <label>Title: </label>
         <InputText @bind-Value="album.Title" />
@@ -31,6 +34,7 @@
         <ValidationMessage For="@(() => album.ReleaseYear)" />
 
     </div>
+    <ValidationSummary />
     <button type="submit">Save Changes</button>
 </EditForm>
 
